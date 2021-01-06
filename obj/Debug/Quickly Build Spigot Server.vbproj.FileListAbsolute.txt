@@ -1,0 +1,13 @@
+C:\Users\Administrator\source\repos\Quickly Build Spigot Server\Quickly Build Spigot Server\bin\Debug\Quickly Build Spigot Server.exe.config
+C:\Users\Administrator\source\repos\Quickly Build Spigot Server\Quickly Build Spigot Server\bin\Debug\Quickly Build Spigot Server.exe
+C:\Users\Administrator\source\repos\Quickly Build Spigot Server\Quickly Build Spigot Server\bin\Debug\Quickly Build Spigot Server.pdb
+C:\Users\Administrator\source\repos\Quickly Build Spigot Server\Quickly Build Spigot Server\bin\Debug\Quickly Build Spigot Server.xml
+C:\Users\Administrator\source\repos\Quickly Build Spigot Server\Quickly Build Spigot Server\obj\Debug\Quickly Build Spigot Server.vbprojAssemblyReference.cache
+C:\Users\Administrator\source\repos\Quickly Build Spigot Server\Quickly Build Spigot Server\obj\Debug\Quickly_Build_Spigot_Server.Form1.resources
+C:\Users\Administrator\source\repos\Quickly Build Spigot Server\Quickly Build Spigot Server\obj\Debug\Quickly_Build_Spigot_Server.Resources.resources
+C:\Users\Administrator\source\repos\Quickly Build Spigot Server\Quickly Build Spigot Server\obj\Debug\Quickly Build Spigot Server.vbproj.GenerateResource.cache
+C:\Users\Administrator\source\repos\Quickly Build Spigot Server\Quickly Build Spigot Server\obj\Debug\Quickly Build Spigot Server.vbproj.CoreCompileInputs.cache
+C:\Users\Administrator\source\repos\Quickly Build Spigot Server\Quickly Build Spigot Server\obj\Debug\Quickly Build Spigot Server.exe
+C:\Users\Administrator\source\repos\Quickly Build Spigot Server\Quickly Build Spigot Server\obj\Debug\Quickly Build Spigot Server.xml
+C:\Users\Administrator\source\repos\Quickly Build Spigot Server\Quickly Build Spigot Server\obj\Debug\Quickly Build Spigot Server.pdb
+C:\Users\Administrator\source\repos\Quickly Build Spigot Server\Quickly Build Spigot Server\obj\Debug\Quickly_Build_Spigot_Server.Form2.resources
