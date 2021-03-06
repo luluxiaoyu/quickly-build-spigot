@@ -1,7 +1,9 @@
 ﻿Imports System.IO
 Imports System.Net
 Public Class Form1
+
     Dim bt As New ProcessStartInfo("curl")
+    Dim bt1 As New ProcessStartInfo(Application.StartupPath & "/curl.exe")
     Dim build As New ProcessStartInfo("java")
     Private _process As Process = Nothing
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
@@ -14,29 +16,105 @@ Public Class Form1
 
         '检查buildtools是否存在
         If My.Computer.FileSystem.FileExists(Application.StartupPath & "/BuildSpigot/BuildTools.jar") = False Then
-            bt.Arguments = " -o BuildTools.jar https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar"
-            bt.WorkingDirectory = Application.StartupPath & "/BuildSpigot"
-            Process.Start(bt)
+            Dim sysver = 0
+            Dim osVer As Version = Environment.OSVersion.Version
+            If osVer.Major = 6 And osVer.Minor = 1 Then
+                sysver = 1
+            End If
+
+            Try
+                If osVer.Major = 6 And osVer.Minor = 1 Then
+                    bt1.Arguments = " -o BuildTools.jar https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar"
+                    bt1.WorkingDirectory = Application.StartupPath & "/BuildSpigot"
+                    Process.Start(bt1)
+                Else
+                    bt.Arguments = " -o BuildTools.jar https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar"
+                    bt.WorkingDirectory = Application.StartupPath & "/BuildSpigot"
+                    Process.Start(bt)
+                End If
+            Catch ex As Exception
+                If (sysver = 1) Then
+                    MsgBox("检测到为Windows7系统，且CURL不存在，即将跳转官网，请下载CURL,然后解压，把解压出来的所有文件放在本程序目录下（解压的文件有一个程序和证书）", 16, "CURL不存在")
+                    Shell("explorer https://winampplugins.co.uk/curl/")
+                End If
+            End Try
             TextBox1.Text += ("[系统]下载buildtools.jar后，请重新点击构建（黑色窗口关闭后就是下载完了）" + Environment.NewLine)
+        Else
+            build.WindowStyle = ProcessWindowStyle.Hidden
+            build.Arguments = " -jar BuildTools.jar --rev " & ComboBox1.Text
+            build.WorkingDirectory = Application.StartupPath & "/BuildSpigot"
+            build.UseShellExecute = False
+            build.RedirectStandardOutput = True
+            build.CreateNoWindow = True
+            _process = New Process()
+            _process.StartInfo = build
+            ' 定义接收消息的Handler
+            AddHandler _process.OutputDataReceived, New DataReceivedEventHandler(AddressOf Process1_OutputDataReceived)
+            _process.Start()
+            ' 开始接收
+            _process.BeginOutputReadLine()
         End If
-        build.WindowStyle = ProcessWindowStyle.Hidden
-        build.Arguments = " -jar BuildTools.jar --rev " & ComboBox1.Text
-        build.WorkingDirectory = Application.StartupPath & "/BuildSpigot"
-        build.UseShellExecute = False
-        build.RedirectStandardOutput = True
-        build.CreateNoWindow = True
-        _process = New Process()
-        _process.StartInfo = build
-        ' 定义接收消息的Handler
-        AddHandler _process.OutputDataReceived, New DataReceivedEventHandler(AddressOf Process1_OutputDataReceived)
-        _process.Start()
-        ' 开始接收
-        _process.BeginOutputReadLine()
+
     End Sub
     Private Delegate Sub AddMessageHandler(ByVal msg As String)
     Private Sub Process1_OutputDataReceived(sender As Object, e As DataReceivedEventArgs) Handles Process1.OutputDataReceived
         Dim handler As AddMessageHandler = Function(msg As String)
-                                               TextBox1.AppendText("[信息]" & msg + Environment.NewLine)
+                                               'TextBox1.AppendText("[信息]" & msg + Environment.NewLine)
+                                               '对输出文本进行筛选处理
+                                               If InStr(1, msg, "Clone") <> 0 Then
+                                                   TextBox1.AppendText("[正在克隆库存]" & msg + Environment.NewLine)
+                                               Else
+                                                   If InStr(1, msg, "download") <> 0 Then
+                                                       TextBox1.AppendText("[正在进行文件下载]" & msg + Environment.NewLine)
+                                                   Else
+                                                       If InStr(1, msg, "Extracted") <> 0 Then
+                                                           TextBox1.AppendText("[正在进行文件提取]" & msg + Environment.NewLine)
+                                                       Else
+                                                           If InStr(1, msg, "Remapping jar") <> 0 Then
+                                                               TextBox1.AppendText("[打包中]" & msg + Environment.NewLine)
+                                                           Else
+                                                               If InStr(1, msg, "Download") <> 0 Then
+                                                                   TextBox1.AppendText("[正在进行文件下载]" & msg + Environment.NewLine)
+                                                               Else
+                                                                   If InStr(1, msg, "Progress") <> 0 Then
+                                                                       TextBox1.AppendText("[线程进度]" & msg + Environment.NewLine)
+                                                                   Else
+                                                                       If InStr(1, msg, "Decompiling") <> 0 Then
+                                                                           TextBox1.AppendText("[反编译中]" & msg + Environment.NewLine)
+                                                                       Else
+                                                                           If InStr(1, msg, "Patching") <> 0 Then
+                                                                               TextBox1.AppendText("[文件注入]" & msg + Environment.NewLine)
+                                                                           Else
+                                                                               If InStr(1, msg, "Rebuilding") <> 0 Then
+                                                                                   TextBox1.AppendText("[重建中]" & msg + Environment.NewLine)
+                                                                               Else
+                                                                                   If InStr(1, msg, "INFO") <> 0 Then
+                                                                                       TextBox1.AppendText("[信息]" & msg + Environment.NewLine)
+                                                                                   Else
+                                                                                       If InStr(1, msg, "WARN") <> 0 Then
+                                                                                           TextBox1.AppendText("[警告]" & msg + Environment.NewLine)
+                                                                                       Else
+                                                                                           If InStr(1, msg, "ERROR") <> 0 Then
+                                                                                               TextBox1.AppendText("[错误]" & msg + Environment.NewLine)
+                                                                                           Else
+                                                                                               If InStr(1, msg, "clone") <> 0 Then
+                                                                                                   TextBox1.AppendText("[正在克隆库存]" & msg + Environment.NewLine)
+                                                                                               Else
+                                                                                                   TextBox1.AppendText("[日志]" & msg + Environment.NewLine)
+                                                                                               End If
+                                                                                           End If
+                                                                                       End If
+                                                                                   End If
+                                                                               End If
+                                                                           End If
+                                                                       End If
+                                                                   End If
+                                                               End If
+                                                           End If
+                                                       End If
+                                                   End If
+                                               End If
+
                                                If InStr(1, msg, "Everything completed successfully") <> 0 Then
                                                    MsgBox("Spigot服务端构建成功", 64, "构建成功！")
                                                    ComboBox1.Enabled = True
@@ -102,7 +180,7 @@ Public Class Form1
 
     Private Sub Button5_Click(sender As Object, e As EventArgs) Handles Button5.Click
         Try
-            MsgBox(Application.StartupPath & "\BuildSpigot\BuildTools.log.txt")
+            'MsgBox(Application.StartupPath & "\BuildSpigot\BuildTools.log.txt")
             Shell("notepad " & Application.StartupPath & "\BuildSpigot\BuildTools.log.txt")
         Catch ex As Exception
             MsgBox("未找到日志！你删掉了？" & vbCrLf & ex.ToString, 16, "日志找不到···")
@@ -118,5 +196,7 @@ Public Class Form1
         End Try
     End Sub
 
+    Private Sub Process1_Exited(sender As Object, e As EventArgs) Handles Process1.Exited
 
+    End Sub
 End Class
